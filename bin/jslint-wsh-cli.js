@@ -6723,7 +6723,7 @@ function main() {
       option.newcap = true;
     } else if (args[i] === '--node') {
       option.node = true;
-    } else if (args[i] === 'nomen') {
+    } else if (args[i] === '--nomen') {
       option.nomen = true;
     } else if (args[i] === '--on') {
       option.on = true;
@@ -6751,6 +6751,9 @@ function main() {
       option.white = true;
     } else if (args[i] === '--widget') {
       option.widget = true;
+    } else if (args[i].match(/^-/)) {
+      print('unknown option: ' + args[i]);
+      exit(1);
     } else {
       filename = args[i];
     }
