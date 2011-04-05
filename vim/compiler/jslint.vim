@@ -11,5 +11,5 @@ CompilerSet makeprg=jslint
       \\ %
 
 CompilerSet errorformat=
-      \%f:%l:%c:%m,
+      \%f:%l:%c:%m
 
