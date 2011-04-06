@@ -1,9 +1,4 @@
 
-if (!WScript.Fullname.match(/cscript/i)) {
-  WScript.Echo('use cscript.exe');
-  WScript.Quit();
-}
-
 function exit(code) {
   WScript.Quit(code);
 }
