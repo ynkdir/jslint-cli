@@ -19,9 +19,7 @@ function getargs() {
   return args;
 }
 
-function readfile(filename, callback) {
-  fs.readFile(filename, function(err, buf) {
-    callback(err, buf.toString());
-  });
+function readfile(filename, encoding) {
+  return fs.readFileSync(filename, encoding);
 }
 

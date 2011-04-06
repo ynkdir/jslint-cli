@@ -21,11 +21,11 @@ function getargs() {
   return args;
 }
 
-function readfile(filename, callback) {
+function readfile(filename, encoding /*NOTUSED*/) {
   var ForReading = 1, ForWriting = 2, ForAppending = 8;
   var fso = new ActiveXObject('Scripting.FileSystemObject');
   var f = fso.OpenTextFile(filename, ForReading);
   var data = f.ReadAll();
-  callback(null, data);
+  return data;
 }
 
