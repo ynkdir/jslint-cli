@@ -38,6 +38,7 @@ function readfile(filename, encoding) {
   strm.Open();
   strm.LoadFromFile(filename);
   var data = strm.ReadText();
+  strm.Close();
   return data;
 }
 
