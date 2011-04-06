@@ -21,11 +21,23 @@ function getargs() {
   return args;
 }
 
-function readfile(filename, encoding /*NOTUSED*/) {
-  var ForReading = 1, ForWriting = 2, ForAppending = 8;
-  var fso = new ActiveXObject('Scripting.FileSystemObject');
-  var f = fso.OpenTextFile(filename, ForReading);
-  var data = f.ReadAll();
+//function readfile(filename, encoding /*NOTUSED*/) {
+//  var ForReading = 1, ForWriting = 2, ForAppending = 8;
+//  var fso = new ActiveXObject('Scripting.FileSystemObject');
+//  var f = fso.OpenTextFile(filename, ForReading);
+//  var data = f.ReadAll();
+//  return data;
+//}
+
+// supported encodings are listed in HKEY_CLASSES_ROOT\MIME\Database\Charset
+function readfile(filename, encoding) {
+  var adTypeBinary = 1, adTypeText = 2;
+  var strm = new ActiveXObject('ADODB.Stream');
+  strm.Type = adTypeText;
+  strm.Charset = encoding;
+  strm.Open();
+  strm.LoadFromFile(filename);
+  var data = strm.ReadText();
   return data;
 }
 
