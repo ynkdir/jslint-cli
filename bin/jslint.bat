@@ -4,7 +4,7 @@ cscript //nologo //E:jscript "%~dpn0.bat" %*
 goto :eof
 */
 // jslint.js
-// 2011-04-04
+// 2011-04-08
 
 // Copyright (c) 2002 Douglas Crockford  (www.JSLint.com)
 
@@ -449,7 +449,7 @@ var JSLINT = (function () {
             adsafe_bad_id: "ADSAFE violation: bad id.",
             adsafe_div: "ADsafe violation: Wrap the widget in a div.",
             adsafe_fragment: "ADSAFE: Use the fragment option.",
-            adsafe_go: "ADsafe violation: Missing ADSAFE.go.",
+            adsafe_go: "ADsafe violation: Misformed ADSAFE.go.",
             adsafe_html: "Currently, ADsafe does not operate on whole HTML documents. It operates on <div> fragments and .js files.",
             adsafe_id: "ADsafe violation: id does not match.",
             adsafe_id_go: "ADsafe violation: Missing ADSAFE.id or ADSAFE.go.",
@@ -4032,6 +4032,7 @@ loop:   for (;;) {
             if (next_token.id === ']') {
                 break;
             }
+            indent.wrap = false;
             edge();
             this.first.push(expression(10));
             if (next_token.id === ',') {
@@ -4143,6 +4144,7 @@ loop:   for (;;) {
         this.first = [];
         step_in();
         while (next_token.id !== '}') {
+            indent.wrap = false;
 
 // JSLint recognizes the ES5 extension for get/set in object literals,
 // but requires that they be used in pairs.
@@ -5880,17 +5882,19 @@ loop:   for (;;) {
                     }
                     switch (script[0].first.second.value) {
                     case 'id':
-                        if (adsafe_may || script[0].second.length !== 1) {
+                        if (adsafe_may || adsafe_went ||
+                                script[0].second.length !== 1) {
                             fail('adsafe_id', next_token);
                         }
                         adsafe_may = true;
                         break;
                     case 'go':
-                        if (!adsafe_may) {
-                            fail('adsafe_id');
+                        if (adsafe_went) {
+                            fail('adsafe_go');
                         }
                         if (script[0].second.length !== 2 ||
                                 aint(script[0].second[1], 'id', 'function') ||
+                                !script[0].second[1].first ||
                                 script[0].second[1].first.length !== 2 ||
                                 aint(script[0].second[1].first[0], 'value', 'dom') ||
                                 aint(script[0].second[1].first[1], 'value', 'lib')) {
@@ -6597,7 +6601,7 @@ loop:   for (;;) {
     };
     itself.jslint = itself;
 
-    itself.edition = '2011-04-04';
+    itself.edition = '2011-04-08';
 
     return itself;
 
