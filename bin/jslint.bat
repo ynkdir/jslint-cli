@@ -6645,9 +6645,10 @@ function readfile(filename, encoding) {
 }
 
 var optspec = (function() {
+  'use strict';
 
   function getopt(args, options) {
-    var rest = [], names, opt, value, i, j;
+    var rest = [], option, names, opt, value, i, j;
     for (i = 0; i < args.length; ++i) {
       if (args[i].match(/^-([^\-].*)$/)) {
         names = RegExp.$1;
