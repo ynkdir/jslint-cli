@@ -3,11 +3,11 @@ wget=wget --no-check-certificate
 
 all: bin/jslint bin/jslint.bat
 
-bin/jslint: fulljslint.js jslint-node.js optspec.js jslint-cli.js
+bin/jslint: jslint.js jslint-node.js optspec.js jslint-cli.js
 	echo "#!/usr/bin/env node" > $@
 	cat $^ >> $@
 
-bin/jslint.bat: fulljslint.js jslint-wsh.js optspec.js jslint-cli.js
+bin/jslint.bat: jslint.js jslint-wsh.js optspec.js jslint-cli.js
 	echo '@set @junk=1 /*' > $@
 	echo '@echo off' >> $@
 	echo 'cscript //nologo //E:jscript "%~dpn0.bat" %*' >> $@
@@ -17,6 +17,6 @@ bin/jslint.bat: fulljslint.js jslint-wsh.js optspec.js jslint-cli.js
 	# unix2dos
 	sed 's/$$/\r/' $@ > __tmp && mv __tmp $@
 
-fulljslint.js:
-	$(wget) https://github.com/douglascrockford/JSLint/raw/master/fulljslint.js
+jslint.js:
+	$(wget) https://github.com/douglascrockford/JSLint/raw/master/jslint.js
 

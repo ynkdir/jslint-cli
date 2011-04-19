@@ -4,7 +4,7 @@ cscript //nologo //E:jscript "%~dpn0.bat" %*
 goto :eof
 */
 // jslint.js
-// 2011-04-13
+// 2011-04-18
 
 // Copyright (c) 2002 Douglas Crockford  (www.JSLint.com)
 
@@ -372,6 +372,24 @@ var JSLINT = (function () {
     "use strict";
 
     var adsafe_id,      // The widget's ADsafe id.
+        adsafe_infix = {
+            '-': true,
+            '*': true,
+            '/': true,
+            '%': true,
+            '&': true,
+            '|': true,
+            '^': true,
+            '<<': true,
+            '>>': true,
+            '>>>': true,
+        },
+        adsafe_prefix = {
+            '-': true,
+            '+': true,
+            '~': true,
+            'typeof': true
+        },
         adsafe_may,     // The widget may load approved scripts.
         adsafe_top,     // At the top of the widget script.
         adsafe_went,    // ADSAFE.go has been called.
@@ -1189,7 +1207,7 @@ var JSLINT = (function () {
 // unsafe characters that are silently deleted by one or more browsers
         cx = /[\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/,
 // token
-        tx = /^\s*([(){}\[.,:;'"~\?\]#@]|==?=?|\/(\*(jslint|properties|members|global)?|=|\/)?|\*[\/=]?|\+(?:=|\++)?|-(?:=|-+)?|%=?|&[&=]?|\|[|=]?|>>?>?=?|<([\/=!]|\!(\[|--)?|<=?)?|\^=?|\!=?=?|[a-zA-Z_$][a-zA-Z0-9_$]*|[0-9]+([xX][0-9a-fA-F]+|\.[0-9]*)?([eE][+\-]?[0-9]+)?)/,
+        tx = /^\s*([(){}\[.,:;'"~\?\]#@]|==?=?|\/(\*(jslint|properties|property|members?|globals?)?|=|\/)?|\*[\/=]?|\+(?:=|\++)?|-(?:=|-+)?|%=?|&[&=]?|\|[|=]?|>>?>?=?|<([\/=!]|\!(\[|--)?|<=?)?|\^=?|\!=?=?|[a-zA-Z_$][a-zA-Z0-9_$]*|[0-9]+([xX][0-9a-fA-F]+|\.[0-9]*)?([eE][+\-]?[0-9]+)?)/,
 // html token
         hx = /^\s*(['"=>\/&#]|<(?:\/|\!(?:--)?)?|[a-zA-Z][a-zA-Z0-9_\-:]*|[0-9]+|--)/,
 // characters in strings that need escapement
@@ -2404,6 +2422,9 @@ klass:                                  do {
             old_comments_off = comments_off,
             old_option_white = option.white,
             value;
+        if (next_token.line === token.line && next_token.from === token.thru) {
+            warn('missing_space_a_b', next_token, token.value, next_token.value);
+        }
         comments_off = true;
         option.white = false;
         if (lookahead.length > 0 || next_token.comments) {
@@ -2411,7 +2432,9 @@ klass:                                  do {
         }
         switch (command) {
         case '/*properties':
+        case '/*property':
         case '/*members':
+        case '/*member':
             command = '/*properties';
             if (!properties) {
                 properties = {};
@@ -2422,7 +2445,9 @@ klass:                                  do {
                 warn('adsafe_a', this);
             }
             break;
+        case '/*globals':
         case '/*global':
+            command = '/*global';
             if (option.safe) {
                 warn('adsafe_a', this);
             }
@@ -3995,8 +4020,7 @@ loop:   for (;;) {
             } else if (!option.evil &&
                     (e.value === 'eval' || e.value === 'execScript')) {
                 warn('evil', e);
-            } else if (option.safe &&
-                    (e.value.charAt(0) === '_' || e.value.charAt(0) === '-')) {
+            } else if (option.safe && e.value.charAt(0) === '_') {
                 warn('adsafe_subscript_a', e);
             }
             tally_property(e.value);
@@ -4006,8 +4030,9 @@ loop:   for (;;) {
                     warn('subscript', e);
                 }
             }
-        } else if (e.arity !== 'number' || e.value < 0) {
-            if (option.safe) {
+        } else if (e.arity !== 'number' && option.safe) {
+            if (!(  (e.arity === 'prefix' && adsafe_prefix[e.id] === true) ||
+                    (e.arity === 'infix' && adsafe_infix[e.id] === true))) {
                 warn('adsafe_subscript_a', e);
             }
         }
@@ -4236,8 +4261,11 @@ loop:   for (;;) {
     });
 
     stmt('/*global', directive);
+    stmt('/*globals', directive);
     stmt('/*jslint', directive);
+    stmt('/*member', directive);
     stmt('/*members', directive);
+    stmt('/*property', directive);
     stmt('/*properties', directive);
 
     stmt('var', function () {
@@ -6176,7 +6204,7 @@ loop:   for (;;) {
 // The actual JSLINT function itself.
 
     var itself = function (the_source, the_option) {
-        var i, keys, predef;
+        var i, keys, predef, tree;
         JSLINT.comments = [];
         JSLINT.errors = [];
         JSLINT.tree = '';
@@ -6335,19 +6363,20 @@ loop:   for (;;) {
                         use_strict();
                     }
                     adsafe_top = true;
-                    begin.first = statements();
+                    tree = statements();
+                    begin.first = tree;
                     JSLINT.tree = begin;
-                    if (option.adsafe && (JSLINT.tree.length !== 1 ||
-                            aint(JSLINT.tree[0], 'id', '(') ||
-                            aint(JSLINT.tree[0].first, 'id', '.') ||
-                            aint(JSLINT.tree[0].first.first, 'value', 'ADSAFE') ||
-                            aint(JSLINT.tree[0].first.second, 'value', 'lib') ||
-                            JSLINT.tree[0].second.length !== 2 ||
-                            JSLINT.tree[0].second[0].arity !== 'string' ||
-                            aint(JSLINT.tree[0].second[1], 'id', 'function'))) {
+                    if (option.adsafe && (tree.length !== 1 ||
+                            aint(tree[0], 'id', '(') ||
+                            aint(tree[0].first, 'id', '.') ||
+                            aint(tree[0].first.first, 'value', 'ADSAFE') ||
+                            aint(tree[0].first.second, 'value', 'lib') ||
+                            tree[0].second.length !== 2 ||
+                            tree[0].second[0].arity !== 'string' ||
+                            aint(tree[0].second[1], 'id', 'function'))) {
                         fail('adsafe_lib');
                     }
-                    if (JSLINT.tree.disrupt) {
+                    if (tree.disrupt) {
                         warn('weird_program', prev_token);
                     }
                 }
@@ -6601,7 +6630,7 @@ loop:   for (;;) {
     };
     itself.jslint = itself;
 
-    itself.edition = '2011-04-13';
+    itself.edition = '2011-04-18';
 
     return itself;
 
