@@ -6888,7 +6888,7 @@ option_parser.add_option('  --white        true, if strict whitespace rules appl
 option_parser.add_option('  --widget       true  if the Yahoo Widgets globals should be predefined');
 
 function _isArray(o) {
-  return Object.prototype.toString.call(o) == '[object Array]';
+  return Object.prototype.toString.call(o) === '[object Array]';
 }
 
 function geterrors() {
