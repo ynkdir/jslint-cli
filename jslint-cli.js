@@ -50,7 +50,7 @@ function geterrors() {
         errors.push({
           line: e.line,
           col: e.character,
-          message: e.reason + ' : ' + e.evidence
+          message: e.reason
         });
       }
     }
