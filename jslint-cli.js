@@ -34,8 +34,60 @@ option_parser.add_option('  --sub          true, if all forms of subscript notat
 option_parser.add_option('  --white        true, if strict whitespace rules apply');
 option_parser.add_option('  --widget       true  if the Yahoo Widgets globals should be predefined');
 
+
+function geterrors() {
+  var data = JSLINT.data();
+  var errors = [];
+  var i, e;
+
+  if (data.errors) {
+    for (i = 0; i < data.errors.length; ++i) {
+      e = JSLINT.errors[i];
+      if (e) {
+        errors.push({
+          line: e.line,
+          col: e.character,
+          message: e.reason + ' : ' + e.evidence
+        });
+      }
+    }
+  }
+
+  if (data.unused) {
+    for (i = 0; i < data.unused.length; ++i) {
+      e = data.unused[i];
+      errors.push({
+        line: e.line,
+        col: 0,
+        message: 'Unused variable: ' + e.name
+      });
+    }
+  }
+
+  if (data.implieds) {
+    for (i = 0; i < data.implieds.length; ++i) {
+      e = data.implieds[i];
+      errors.push({
+        line: e.line,
+        col: 0,
+        message: 'Implied global: ' + e.name
+      });
+    }
+  }
+
+  errors.sort(function(a, b) {
+    if (a.line < b.line) { return -1; }
+    else if (a.line > b.line) { return 1; }
+    else if (a.col < b.col) { return -1; }
+    else if (a.col > b.col) { return 1; }
+    return 0;
+  });
+
+  return errors;
+}
+
 function main() {
-  var args, filename, data, noerror, i;
+  var args, filename, data, errors, i, e;
   try {
     args = option_parser.parse_args(getargs());
   } catch (ex) {
@@ -48,15 +100,11 @@ function main() {
   }
   filename = args.args[0];
   data = readfile(args.args[0], 'utf-8');
-  noerror = JSLINT(data, args.opts);
-  if (!noerror) {
-    for (i = 0; i < JSLINT.errors.length; ++i) {
-      var e = JSLINT.errors[i];
-      if (e === null) {
-        break;
-      }
-      print([filename, e.line, e.character, e.reason].join(':'));
-    }
+  JSLINT(data, args.opts);
+  errors = geterrors();
+  for (i = 0; i < errors.length; ++i) {
+    e = errors[i];
+    print([filename, e.line, e.col, e.message].join(':'));
   }
 }
 
