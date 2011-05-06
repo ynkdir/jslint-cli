@@ -42,7 +42,7 @@ function geterrors() {
 
   if (data.errors) {
     for (i = 0; i < data.errors.length; ++i) {
-      e = JSLINT.errors[i];
+      e = data.errors[i];
       if (e) {
         errors.push({
           line: e.line,
