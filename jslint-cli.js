@@ -26,9 +26,10 @@ option_parser.add_option('  --plusplus     true, if increment/decrement should n
 option_parser.add_option('  --regexp       true, if the . should not be allowed in regexp literals');
 option_parser.add_option('  --rhino        true, if the Rhino environment globals should be predefined');
 option_parser.add_option('  --undef        true, if variables should be declared before used');
+option_parser.add_option('  --unparam      true, if unused parameters should be tolerated');
 option_parser.add_option('  --safe         true, if use of some browser features should be restricted');
 option_parser.add_option('  --windows      true, if MS Windows-specific globals should be predefined');
-option_parser.add_option('  --strict       true, require the "use strict"; pragma');
+option_parser.add_option("  --strict       true, require the 'use strict'; pragma");
 option_parser.add_option('  --sub          true, if all forms of subscript notation are tolerated');
 option_parser.add_option('  --white        true, if strict whitespace rules apply');
 option_parser.add_option('  --widget       true  if the Yahoo Widgets globals should be predefined');
