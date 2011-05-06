@@ -6887,11 +6887,14 @@ option_parser.add_option('  --sub          true, if all forms of subscript notat
 option_parser.add_option('  --white        true, if strict whitespace rules apply');
 option_parser.add_option('  --widget       true  if the Yahoo Widgets globals should be predefined');
 
+function _isArray(o) {
+  return Object.prototype.toString.call(o) == '[object Array]';
+}
 
 function geterrors() {
   var data = JSLINT.data();
   var errors = [];
-  var i, j, e;
+  var i, j, e, lines;
 
   if (data.errors) {
     for (i = 0; i < data.errors.length; ++i) {
@@ -6909,9 +6912,10 @@ function geterrors() {
   if (data.unused) {
     for (i = 0; i < data.unused.length; ++i) {
       e = data.unused[i];
-      for (j = 0; j < e.line.length; ++j) {
+      lines = _isArray(e.line) ? e.line : [e.line];
+      for (j = 0; j < lines.length; ++j) {
         errors.push({
-          line: e.line[j],
+          line: lines[j],
           col: 0,
           message: 'Unused variable: ' + e.name
         });
@@ -6922,9 +6926,10 @@ function geterrors() {
   if (data.implieds) {
     for (i = 0; i < data.implieds.length; ++i) {
       e = data.implieds[i];
-      for (j = 0; j < e.line.length; ++j) {
+      lines = _isArray(e.line) ? e.line : [e.line];
+      for (j = 0; j < lines.length; ++j) {
         errors.push({
-          line: e.line[j],
+          line: lines[j],
           col: 0,
           message: 'Implied global: ' + e.name
         });
