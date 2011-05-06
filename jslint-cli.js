@@ -38,7 +38,7 @@ option_parser.add_option('  --widget       true  if the Yahoo Widgets globals sh
 function geterrors() {
   var data = JSLINT.data();
   var errors = [];
-  var i, e;
+  var i, j, e;
 
   if (data.errors) {
     for (i = 0; i < data.errors.length; ++i) {
@@ -56,22 +56,26 @@ function geterrors() {
   if (data.unused) {
     for (i = 0; i < data.unused.length; ++i) {
       e = data.unused[i];
-      errors.push({
-        line: e.line,
-        col: 0,
-        message: 'Unused variable: ' + e.name
-      });
+      for (j = 0; j < e.line.length; ++j) {
+        errors.push({
+          line: e.line[j],
+          col: 0,
+          message: 'Unused variable: ' + e.name
+        });
+      }
     }
   }
 
   if (data.implieds) {
     for (i = 0; i < data.implieds.length; ++i) {
       e = data.implieds[i];
-      errors.push({
-        line: e.line,
-        col: 0,
-        message: 'Implied global: ' + e.name
-      });
+      for (j = 0; j < e.line.length; ++j) {
+        errors.push({
+          line: e.line[j],
+          col: 0,
+          message: 'Implied global: ' + e.name
+        });
+      }
     }
   }
 
