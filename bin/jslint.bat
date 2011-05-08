@@ -4,7 +4,7 @@ cscript //nologo //E:jscript "%~dpn0.bat" %*
 goto :eof
 */
 // jslint.js
-// 2011-05-01
+// 2011-05-06
 
 // Copyright (c) 2002 Douglas Crockford  (www.JSLint.com)
 
@@ -92,33 +92,35 @@ goto :eof
 //             }
 //         ],
 //         functions: [
-//             name: STRING,
-//             line: NUMBER,
-//             last: NUMBER,
-//             param: [
-//                 TOKEN
-//             ],
-//             closure: [
-//                 STRING
-//             ],
-//             var: [
-//                 STRING
-//             ],
-//             exception: [
-//                 STRING
-//             ],
-//             outer: [
-//                 STRING
-//             ],
-//             unused: [
-//                 STRING
-//             ],
-//             global: [
-//                 STRING
-//             ],
-//             label: [
-//                 STRING
-//             ]
+//             {
+//                 name: STRING,
+//                 line: NUMBER,
+//                 last: NUMBER,
+//                 param: [
+//                     TOKEN
+//                 ],
+//                 closure: [
+//                     STRING
+//                 ],
+//                 var: [
+//                     STRING
+//                 ],
+//                 exception: [
+//                     STRING
+//                 ],
+//                 outer: [
+//                     STRING
+//                 ],
+//                 unused: [
+//                     STRING
+//                 ],
+//                 global: [
+//                     STRING
+//                 ],
+//                 label: [
+//                     STRING
+//                 ]
+//             }
 //         ],
 //         globals: [
 //             STRING
@@ -4146,7 +4148,7 @@ loop:   for (;;) {
             edge();
             id = identifier();
             params.push(token);
-            add_label(id, 'unparam');
+            add_label(id, option.unparam ? 'unparam' : 'parameter');
             if (next_token.id === ',') {
                 comma();
             } else {
@@ -4165,7 +4167,7 @@ loop:   for (;;) {
             old_global     = global,
             old_scope      = scope;
         funct = {
-            '(name)'     : name || '"' + anonname + '"',
+            '(name)'     : name || '\'' + anonname + '\'',
             '(line)'     : next_token.line,
             '(context)'  : funct,
             '(breakage)' : 0,
@@ -6483,8 +6485,7 @@ loop:   for (;;) {
                 if (Object.prototype.hasOwnProperty.call(the_function, name)) {
                     if (name.charAt(0) !== '(') {
                         kind = the_function[name];
-                        if (kind === 'unction' ||
-                                (kind === 'unparam' && !option.unparam)) {
+                        if (kind === 'unction' || kind === 'unparam') {
                             kind = 'unused';
                         } else if (typeof kind === 'boolean') {
                             kind = 'global';
@@ -6664,7 +6665,7 @@ loop:   for (;;) {
     };
     itself.jslint = itself;
 
-    itself.edition = '2011-05-01';
+    itself.edition = '2011-05-06';
 
     return itself;
 
