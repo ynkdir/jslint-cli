@@ -24,6 +24,7 @@ option_parser.add_option('  --nomen        true, if names may have dangling _');
 option_parser.add_option('  --on           true, if HTML event handlers should be allowed');
 option_parser.add_option('  --passfail     true, if the scan should stop on first error');
 option_parser.add_option('  --plusplus     true, if increment/decrement should be allowed');
+option_parser.add_option('  --properties   true, if all property names must be declared with /*properties*/');
 option_parser.add_option('  --regexp       true, if the . should be allowed in regexp literals');
 option_parser.add_option('  --rhino        true, if the Rhino environment globals should be predefined');
 option_parser.add_option('  --undef        true, if variables can be declared out of order');
