@@ -1,7 +1,6 @@
 
 var option_parser = new optspec.OptionParser('jslint [options] file');
 option_parser.add_option('  -h, --help     show this help message and exit');
-option_parser.add_option('  --adsafe       true, if ADsafe rules should be enforced');
 option_parser.add_option('  --bitwise      true, if bitwise operators should be allowed');
 option_parser.add_option('  --browser      true, if the standard browser globals should be predefined');
 option_parser.add_option('  --cap          true, if upper case HTML should be allowed');
@@ -29,7 +28,6 @@ option_parser.add_option('  --regexp       true, if the . should be allowed in r
 option_parser.add_option('  --rhino        true, if the Rhino environment globals should be predefined');
 option_parser.add_option('  --undef        true, if variables can be declared out of order');
 option_parser.add_option('  --unparam      true, if unused parameters should be tolerated');
-option_parser.add_option('  --safe         true, if use of some browser features should be restricted');
 option_parser.add_option("  --sloppy       true, if the 'use strict'; pragma is optional");
 option_parser.add_option('  --sub          true, if all forms of subscript notation are tolerated');
 option_parser.add_option('  --vars         true, if multiple var statements per function should be allowed');
