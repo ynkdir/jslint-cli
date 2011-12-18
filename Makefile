@@ -17,6 +17,6 @@ bin/jslint.bat: jslint.js jslint-wsh.js optspec.js jslint-cli.js
 	# unix2dos
 	sed 's/$$/\r/' $@ > __tmp && mv __tmp $@
 
-jslint.js:
-	$(wget) https://github.com/douglascrockford/JSLint/raw/master/jslint.js
+update:
+	$(wget) -O jslint.js https://github.com/douglascrockford/JSLint/raw/master/jslint.js
 
