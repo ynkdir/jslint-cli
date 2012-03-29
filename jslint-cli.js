@@ -1,10 +1,10 @@
 
 var option_parser = new optspec.OptionParser('jslint [options] file');
 option_parser.add_option('  -h, --help     show this help message and exit');
+option_parser.add_option('  --anon         true, if the space may be omitted in anonymous function declarations');
 option_parser.add_option('  --bitwise      true, if bitwise operators should be allowed');
 option_parser.add_option('  --browser      true, if the standard browser globals should be predefined');
 option_parser.add_option('  --cap          true, if upper case HTML should be allowed');
-option_parser.add_option('  --confusion    true, if types can be used inconsistently');
 option_parser.add_option('  --continue     true, if the continuation statement should be tolerated');
 option_parser.add_option('  --css          true, if CSS workarounds should be tolerated');
 option_parser.add_option('  --debug        true, if debugger statements should be allowed');
